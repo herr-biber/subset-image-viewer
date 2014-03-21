@@ -187,12 +187,24 @@ def main():
     parser = argparse.ArgumentParser(description='Process some integers.')
     parser.add_argument('--suffix', '-s', default='', help='Suffix which is appended to all paths')
     parser.add_argument('--delimiter', '-d', default='-', help='Delimiter for splitting paths')
+    parser.add_argument('--ignore-missing', '-i', action='store_true')
     parser.add_argument('--paths', '-p', nargs='+', help='Paths')
 
     args = parser.parse_args()
 
+    paths = []
+    if args.ignore_missing:
+        for path in args.paths:
+            file = path + args.suffix
+            if not os.path.exists(file):
+                sys.stderr.write("Ignoring missing file: %s\n" % file)
+            else:
+                paths.append(path)
+    else:
+        paths = args.paths
+
     app = QtGui.QApplication(sys.argv)
-    sim = SubsetImageModel(paths=args.paths, split_token=args.delimiter, suffix=args.suffix)
+    sim = SubsetImageModel(paths=paths, split_token=args.delimiter, suffix=args.suffix)
     sic = SubsetImageController()
     sic.set_model(sim)
     siv = SubsetImageView(sic)
