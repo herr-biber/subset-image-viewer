@@ -1,3 +1,4 @@
+#!/bin/env python2
 from glob import glob
 import os
 import sys
