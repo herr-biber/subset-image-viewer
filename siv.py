@@ -1,30 +1,25 @@
 #!/usr/bin/env python2
-from glob import glob
-import os
+import fnmatch
 import sys
 from PyQt4 import QtGui
-from os.path import join
 from PyQt4.QtCore import Qt
 import argparse
 
 class SubsetImageModel():
-    def __init__(self, imagedir, prefix, suffix, split_token='-'):
-        self._imagedir = imagedir
+    def __init__(self, paths, split_token='-', suffix=''):
+        self._paths = paths
         self._split_token = split_token
-        self._prefix = prefix
         self._suffix = suffix
 
         self._view = None
         self._active_subset = None
 
         # get subdirs of imagedir
-        subdirs = os.walk(self._imagedir).next()[1]
-
-        subdirs = [subdir[len(self._prefix):] for subdir in subdirs]
+        subdirs = self._paths
 
         # all subdirs should have the same number of tokens
         self._n_subsets = len(subdirs[0].split(self._split_token))
-        assert all(len(s.split(self._split_token)) == self._n_subsets for s in subdirs), "All subdirectories must have the same number of tokens"
+        assert all(len(s.split(self._split_token)) == self._n_subsets for s in subdirs), "All paths must have the same number of tokens"
 
         # add asterisks
         self.subsets = [set("*") for i in xrange(self._n_subsets)]
@@ -67,8 +62,9 @@ class SubsetImageModel():
         # but fill the given values
         for i, token in enumerate(self._active_subset):
             tokens[self._perm[i]] = token
-        glob_pattern = self._prefix + self._split_token.join(tokens)
-        self.filenames = sorted(glob(join(self._imagedir, glob_pattern, self._suffix)))
+        glob_pattern = self._split_token.join(tokens)
+        self.filenames = sorted(fnmatch.filter(self._paths, glob_pattern))
+        self.filenames = [fn + self._suffix for fn in self.filenames]
 
     def get_active_subset(self):
         return self._active_subset
@@ -183,22 +179,14 @@ class SubsetImageView(QtGui.QWidget):
 def main():
 
     parser = argparse.ArgumentParser(description='Process some integers.')
-    parser.add_argument('dir',
-                        help='Base directory')
-    parser.add_argument('prefix',
-                        help='Common prefix all subdirectories to observe should have')
-    parser.add_argument('suffix',
-                        help='Suffix which is appended to all found subdirectories')
-    parser.add_argument('delimiter', default='-',
-                       help='Delimiter for splitting paths')
-
+    parser.add_argument('--suffix', '-s', default='', help='Suffix which is appended to all paths')
+    parser.add_argument('--delimiter', '-d', default='-', help='Delimiter for splitting paths')
+    parser.add_argument('--paths', '-p', nargs='+', help='Paths')
 
     args = parser.parse_args()
 
-    assert os.path.exists(args.dir), "Base directory not exist"
-
     app = QtGui.QApplication(sys.argv)
-    sim = SubsetImageModel(args.dir, prefix=args.prefix, suffix=args.suffix, split_token=args.delimiter)
+    sim = SubsetImageModel(paths=args.paths, split_token=args.delimiter, suffix=args.suffix)
     sic = SubsetImageController()
     sic.set_model(sim)
     siv = SubsetImageView(sic)
