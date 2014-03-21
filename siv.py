@@ -1,15 +1,18 @@
 #!/usr/bin/env python2
 import fnmatch
 import os
+import re
 import sys
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
 import argparse
+from patternreplacer import PatternReplacer
+
 
 class SubsetImageModel():
-    def __init__(self, paths, split_token='-', suffix=''):
+    def __init__(self, paths, split_tokens='-', suffix=''):
         self._paths = paths
-        self._split_token = split_token
+        self._split_token = split_tokens
         self._suffix = suffix
 
         self._view = None
@@ -18,14 +21,19 @@ class SubsetImageModel():
         # get subdirs of imagedir
         subdirs = self._paths
 
+        # use first path as pattern
+        self.pr = PatternReplacer(subdirs[0], split_tokens)
+        self._n_subsets = self.pr.get_n_tokens()
+        print self._n_subsets
+
         # all subdirs should have the same number of tokens
-        self._n_subsets = len(subdirs[0].split(self._split_token))
-        assert all(len(s.split(self._split_token)) == self._n_subsets for s in subdirs), "All paths must have the same number of tokens"
+        assert all(self.pr.verify(s) for s in subdirs), "All paths must have the same number of tokens"
 
         # add asterisks
         self.subsets = [set("*") for i in xrange(self._n_subsets)]
         for subdir in subdirs:
-            tokens = subdir.split(self._split_token)
+            tokens = re.split("|".join(re.escape(t) for t in split_tokens), subdir)
+            tokens = [t for t in tokens if t]  # remove empty ones
             for i, t in enumerate(tokens):
                 self.subsets[i].add(t)
 
@@ -63,7 +71,8 @@ class SubsetImageModel():
         # but fill the given values
         for i, token in enumerate(self._active_subset):
             tokens[self._perm[i]] = token
-        glob_pattern = self._split_token.join(tokens)
+
+        glob_pattern = self.pr.replace(tokens)
         self.filenames = sorted(fnmatch.filter(self._paths, glob_pattern))
         self.filenames = [fn + self._suffix for fn in self.filenames]
 
@@ -186,8 +195,8 @@ def main():
 
     parser = argparse.ArgumentParser(description='Subset image viewer.')
     parser.add_argument('--suffix', '-s', default='', help='Suffix which is appended to all paths')
-    parser.add_argument('--delimiter', '-d', default='-', help='Delimiter for splitting paths')
-    parser.add_argument('--ignore-missing', '-i', action='store_true')
+    parser.add_argument('--delimiters', '-d', default='-', help='Delimiters for splitting paths')
+    parser.add_argument('--ignore-missing', '-i', action='store_true', help='Ignore missing paths')
     parser.add_argument('--paths', '-p', nargs='+', help='Paths')
 
     args = parser.parse_args()
@@ -204,7 +213,7 @@ def main():
         paths = args.paths
 
     app = QtGui.QApplication(sys.argv)
-    sim = SubsetImageModel(paths=paths, split_token=args.delimiter, suffix=args.suffix)
+    sim = SubsetImageModel(paths=paths, split_tokens=args.delimiters, suffix=args.suffix)
     sic = SubsetImageController()
     sic.set_model(sim)
     siv = SubsetImageView(sic)
