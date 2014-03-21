@@ -36,11 +36,17 @@ class SubsetImageModel():
             for i, t in enumerate(tokens):
                 self.subsets[i].add(t)
 
+        self.default_subsets = [set("*") for i in xrange(self._n_subsets)]
+
         # Mapping from changeable token index to index in complete range
         self._perm = []
         for i, subset in enumerate(self.subsets):
             if len(subset) != 2:  # * and one token
                 self._perm.append(i)
+            else:
+                # fix tokens which are unique. No need to glob them
+                assert '*' in subset
+                self.default_subsets[i] = (subset - set('*')).pop()
 
         self.set_active_subset(['*'] * len(self._perm))
         self._update_filenames()
@@ -66,7 +72,7 @@ class SubsetImageModel():
 
     def _update_filenames(self):
         # glob everything
-        tokens = ['*'] * self._n_subsets
+        tokens = list(self.default_subsets)
         # but fill the given values
         for i, token in enumerate(self._active_subset):
             tokens[self._perm[i]] = token
