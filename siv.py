@@ -77,12 +77,15 @@ class SubsetImageModel():
         for i, token in enumerate(self._active_subset):
             tokens[self._perm[i]] = token
 
-        glob_pattern = self.pr.replace(tokens)
-        self.filenames = sorted(fnmatch.filter(self._paths, glob_pattern))
+        self._glob_pattern = self.pr.replace(tokens)
+        self.filenames = sorted(fnmatch.filter(self._paths, self._glob_pattern))
         self.filenames = [fn + self._suffix for fn in self.filenames]
 
     def get_active_subset(self):
         return self._active_subset
+
+    def get_glob_pattern(self):
+        return self._glob_pattern
 
 
 class SubsetImageController():
@@ -105,6 +108,7 @@ class SubsetImageController():
     def combos_changed(self):
         self._model.set_active_subset(self._view.get_selected_subset())
         self._view.set_filenames(self._model.get_filenames())
+        self._view.set_statusbar(self._model.get_glob_pattern())
         self.filename_changed()
 
     def get_subsets(self):
@@ -174,6 +178,7 @@ class SubsetImageView(QtGui.QWidget):
             return None
 
     def set_image(self, filename):
+
         if not filename:
             return
         if not os.path.exists(filename):
@@ -195,6 +200,9 @@ class SubsetImageView(QtGui.QWidget):
         pixmap = self.image_widget.pixmap()
         if pixmap and not pixmap.isNull():
             self.image_widget.setPixmap(pixmap.scaled(self.image_widget.size(), Qt.KeepAspectRatio))
+
+    def set_statusbar(self, message, time=10000):
+        self.parent().statusBar().showMessage(message, time)
 
 def main():
 
@@ -222,7 +230,9 @@ def main():
     sic = SubsetImageController()
     sic.set_model(sim)
     siv = SubsetImageView(sic)
-    siv.show()
+    main_window = QtGui.QMainWindow()
+    main_window.setCentralWidget(siv)
+    main_window.show()
 
     sys.exit(app.exec_())
 
