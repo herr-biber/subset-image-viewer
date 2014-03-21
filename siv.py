@@ -184,7 +184,7 @@ class SubsetImageView(QtGui.QWidget):
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Process some integers.')
+    parser = argparse.ArgumentParser(description='Subset image viewer.')
     parser.add_argument('--suffix', '-s', default='', help='Suffix which is appended to all paths')
     parser.add_argument('--delimiter', '-d', default='-', help='Delimiter for splitting paths')
     parser.add_argument('--ignore-missing', '-i', action='store_true')
