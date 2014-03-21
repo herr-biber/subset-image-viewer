@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 import fnmatch
+import os
 import sys
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt
@@ -159,8 +160,13 @@ class SubsetImageView(QtGui.QWidget):
             return None
 
     def set_image(self, filename):
-        pixmap = QtGui.QPixmap(filename)
-        self.image_widget.setPixmap(pixmap)
+        if not filename:
+            return
+        if not os.path.exists(filename):
+            self.image_widget.setText("File not found: \n" + filename)
+        else:
+            pixmap = QtGui.QPixmap(filename)
+            self.image_widget.setPixmap(pixmap)
         self.resizeEvent(None)
 
     def set_filenames(self, filenames):
