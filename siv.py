@@ -24,7 +24,6 @@ class SubsetImageModel():
         # use first path as pattern
         self.pr = PatternReplacer(subdirs[0], split_tokens)
         self._n_subsets = self.pr.get_n_tokens()
-        print self._n_subsets
 
         # all subdirs should have the same number of tokens
         assert all(self.pr.verify(s) for s in subdirs), "All paths must have the same number of tokens"
