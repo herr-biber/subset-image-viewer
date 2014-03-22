@@ -233,7 +233,17 @@ class SubsetImageView(QtGui.QWidget):
         self.parent().statusBar().showMessage(message, time)
 
     def _combos_changed(self):
+        current_item_text = self.filenames.currentItem().text() if self.filenames.currentItem() is not None else None
         self._controller.combos_changed()
+
+        item_in_updated_list = self.filenames.findItems(current_item_text, Qt.MatchExactly)\
+            if current_item_text is not None else None
+        if item_in_updated_list:
+            # use previously selected item in new list
+            self.filenames.setCurrentItem(item_in_updated_list[0])
+        else:
+            # otherwise select first item
+            self.filenames.setCurrentRow(0)
 
 
 def main():
