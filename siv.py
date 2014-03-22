@@ -157,13 +157,13 @@ class SubsetImageView(QtGui.QWidget):
             combo.addItems(subset)
             combo.currentIndexChanged.connect(controller.combos_changed)
             self.combos.append(combo)
-            hbox_upper.addWidget(combo)
+            hbox_upper.addWidget(combo, 1)
 
         self.anti_alias = QtGui.QCheckBox()
         self.anti_alias.setText("AA")
         self.anti_alias.setFixedSize(self.anti_alias.sizeHint())
         self.anti_alias.stateChanged.connect(self.resizeEvent)
-        hbox_upper.addWidget(self.anti_alias)
+        hbox_upper.addWidget(self.anti_alias, 0, Qt.AlignRight)
 
         # Image display
         self.image = QtGui.QPixmap()
