@@ -229,9 +229,9 @@ def main():
     paths = []
     if args.ignore_missing:
         for path in args.paths:
-            file = path + args.suffix
-            if not os.path.exists(file):
-                sys.stderr.write("Ignoring missing file: %s\n" % file)
+            filename = path + args.suffix
+            if not os.path.exists(filename):
+                sys.stderr.write("Ignoring missing file: %s\n" % filename)
             else:
                 paths.append(path)
     else:
