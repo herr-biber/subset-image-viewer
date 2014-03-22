@@ -185,7 +185,7 @@ class SubsetImageView(QtGui.QWidget):
 
         hbox_lower = QtGui.QSplitter(Qt.Horizontal)
         hbox_lower.splitterMoved.connect(self.resizeEvent)
-        hbox_lower.addWidget(self.image_widget)  # scaled
+        hbox_lower.addWidget(self.image_widget)
         hbox_lower.addWidget(self.filenames)
 
         vbox = QtGui.QVBoxLayout()
@@ -216,13 +216,13 @@ class SubsetImageView(QtGui.QWidget):
         else:
             self.image = QtGui.QPixmap(filename)
             self.image_widget.setPixmap(self.image)
-        self.resizeEvent(None)
+        self.resizeEvent()
 
     def set_filenames(self, filenames):
         self.filenames.clear()
         self.filenames.addItems(filenames)
 
-    def resizeEvent(self, resize_event):
+    def resizeEvent(self, resize_event=None):
         if self.image and not self.image.isNull():
             transformation_mode = Qt.SmoothTransformation if self.anti_alias.checkState() else Qt.FastTransformation
             self.image_widget.setPixmap(
