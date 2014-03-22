@@ -142,6 +142,7 @@ class SubsetImageView(QtGui.QWidget):
         @type  controller: SubsetImageController
         """
         QtGui.QWidget.__init__(self, parent)
+        self._controller = controller
         controller.set_view(self)
 
         self.setWindowTitle('Subset image viewer')
@@ -158,7 +159,7 @@ class SubsetImageView(QtGui.QWidget):
         for subset in subsets:
             combo = QtGui.QComboBox()
             combo.addItems(subset)
-            combo.currentIndexChanged.connect(controller.combos_changed)
+            combo.currentIndexChanged.connect(self._combos_changed)
             self.combos.append(combo)
             hbox_upper.addWidget(combo, 1)
 
@@ -229,6 +230,9 @@ class SubsetImageView(QtGui.QWidget):
 
     def set_statusbar(self, message, time=10000):
         self.parent().statusBar().showMessage(message, time)
+
+    def _combos_changed(self):
+        self._controller.combos_changed()
 
 
 def main():
