@@ -1,5 +1,6 @@
 import re
 
+
 class PatternReplacer:
     def __init__(self, samplepattern, delimiters):
         self.spans = []

@@ -29,14 +29,14 @@ class SubsetImageModel():
         assert all(self.pr.verify(s) for s in subdirs), "All paths must have the same number of tokens"
 
         # add asterisks
-        self.subsets = [set("*") for i in xrange(self._n_subsets)]
+        self.subsets = [set("*")] * self._n_subsets
         for subdir in subdirs:
             tokens = re.split("|".join(re.escape(t) for t in split_tokens), subdir)
             tokens = [t for t in tokens if t]  # remove empty ones
             for i, t in enumerate(tokens):
                 self.subsets[i].add(t)
 
-        self.default_subsets = [set("*") for i in xrange(self._n_subsets)]
+        self.default_subsets = [set("*")] * self._n_subsets
 
         # Mapping from changeable token index to index in complete range
         self._perm = []
