@@ -4,7 +4,7 @@ import os
 import re
 import sys
 from PyQt4 import QtGui
-from PyQt4.QtCore import Qt
+from PyQt4.QtCore import Qt, QSize
 import argparse
 from patternreplacer import PatternReplacer
 
@@ -121,6 +121,13 @@ class SubsetImageController():
         filename = self._view.get_selected_filename()
         self._view.set_image(filename)
 
+class ListWidget(QtGui.QListWidget):
+  def sizeHint(self):
+    s = QSize()
+    s.setHeight(super(ListWidget, self).sizeHint().height())
+    # hint to max text length
+    s.setWidth(self.sizeHintForColumn(0))
+    return s
 
 class SubsetImageView(QtGui.QWidget):
     def __init__(self, controller, parent=None):
@@ -148,19 +155,25 @@ class SubsetImageView(QtGui.QWidget):
 
         # Image display
         self.image_widget = QtGui.QLabel()
+        # allow widget to decreased in size
+        self.image_widget.setMinimumSize(1, 1)
 
-        self.filenames = QtGui.QListWidget()
+        # filename list
+        self.filenames = ListWidget()
         self.filenames.addItems(controller.get_filenames())
         self.filenames.currentItemChanged.connect(controller.filename_changed)
-        self.filenames.setFixedWidth(300)
+        self.filenames.updateGeometry()
+        # width from scrollbar is too big? just use half of it.
+        self.filenames.setMaximumWidth(self.filenames.sizeHint().width() + self.filenames.verticalScrollBar().width() / 2)
 
-        hbox_lower = QtGui.QHBoxLayout()
-        hbox_lower.addWidget(self.image_widget, 1)  # scaled
+        hbox_lower = QtGui.QSplitter(Qt.Horizontal)
+        hbox_lower.splitterMoved.connect(self.resizeEvent)
+        hbox_lower.addWidget(self.image_widget)  # scaled
         hbox_lower.addWidget(self.filenames)
 
         vbox = QtGui.QVBoxLayout()
         vbox.addLayout(hbox_upper)
-        vbox.addLayout(hbox_lower)
+        vbox.addWidget(hbox_lower)
         self.setLayout(vbox)
 
     def get_selected_subset(self):
@@ -193,10 +206,6 @@ class SubsetImageView(QtGui.QWidget):
         self.filenames.addItems(filenames)
 
     def resizeEvent(self, QResizeEvent):
-        # Arbitrary scaling, but no aspect ratio
-        # self.image_widget.setScaledContents(True)
-
-        # TODO window can not be rescaled to smaller size, since pixmap is set to fixed width and height
         pixmap = self.image_widget.pixmap()
         if pixmap and not pixmap.isNull():
             self.image_widget.setPixmap(pixmap.scaled(self.image_widget.size(), Qt.KeepAspectRatio))
