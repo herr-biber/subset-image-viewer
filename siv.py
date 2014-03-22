@@ -151,6 +151,9 @@ class SubsetImageView(QtGui.QWidget):
 
         # Statically set combos
         subsets = controller.get_subsets()
+        if len(subsets) == 1:
+            subsets = []
+
         self.combos = []
         for subset in subsets:
             combo = QtGui.QComboBox()
