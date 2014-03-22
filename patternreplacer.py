@@ -37,6 +37,10 @@ class PatternReplacer:
         if delims != self.delims:
             return False
 
+        if spans == self.spans:
+            # this is especially true for self.spans = []
+            return True
+
         if spans[0][0] == 0 and not self.begins_with_delimiter:
             return False
 
