@@ -226,7 +226,8 @@ class SubsetImageView(QtGui.QWidget):
     def resizeEvent(self, resize_event):
         if self.image and not self.image.isNull():
             transformation_mode = Qt.SmoothTransformation if self.anti_alias.checkState() else Qt.FastTransformation
-            self.image_widget.setPixmap(self.image.scaled(self.image_widget.size(), Qt.KeepAspectRatio, transformation_mode))
+            self.image_widget.setPixmap(
+                self.image.scaled(self.image_widget.size(), Qt.KeepAspectRatio, transformation_mode))
 
     def set_statusbar(self, message, time=10000):
         self.parent().statusBar().showMessage(message, time)
