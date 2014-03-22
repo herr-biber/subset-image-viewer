@@ -154,6 +154,7 @@ class SubsetImageView(QtGui.QWidget):
             hbox_upper.addWidget(combo)
 
         # Image display
+        self.image = QtGui.QPixmap()
         self.image_widget = QtGui.QLabel()
         # allow widget to decreased in size
         self.image_widget.setMinimumSize(1, 1)
@@ -197,8 +198,8 @@ class SubsetImageView(QtGui.QWidget):
         if not os.path.exists(filename):
             self.image_widget.setText("File not found: \n" + filename)
         else:
-            pixmap = QtGui.QPixmap(filename)
-            self.image_widget.setPixmap(pixmap)
+            self.image = QtGui.QPixmap(filename)
+            self.image_widget.setPixmap(self.image)
         self.resizeEvent(None)
 
     def set_filenames(self, filenames):
@@ -206,9 +207,8 @@ class SubsetImageView(QtGui.QWidget):
         self.filenames.addItems(filenames)
 
     def resizeEvent(self, QResizeEvent):
-        pixmap = self.image_widget.pixmap()
-        if pixmap and not pixmap.isNull():
-            self.image_widget.setPixmap(pixmap.scaled(self.image_widget.size(), Qt.KeepAspectRatio))
+        if self.image and not self.image.isNull():
+            self.image_widget.setPixmap(self.image.scaled(self.image_widget.size(), Qt.KeepAspectRatio))
 
     def set_statusbar(self, message, time=10000):
         self.parent().statusBar().showMessage(message, time)
