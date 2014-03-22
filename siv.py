@@ -131,7 +131,8 @@ class ListWidget(QtGui.QListWidget):
         s = QSize()
         s.setHeight(super(ListWidget, self).sizeHint().height())
         # hint to max text length
-        s.setWidth(self.sizeHintForColumn(0))
+        # width from scrollbar is too big? just use half of it.
+        s.setWidth(self.sizeHintForColumn(0) + self.verticalScrollBar().width() / 2)
         return s
 
 
@@ -180,9 +181,7 @@ class SubsetImageView(QtGui.QWidget):
         self.filenames.addItems(controller.get_filenames())
         self.filenames.currentItemChanged.connect(controller.filename_changed)
         self.filenames.updateGeometry()
-        # width from scrollbar is too big? just use half of it.
-        self.filenames.setMaximumWidth(self.filenames.sizeHint().width()
-                                       + self.filenames.verticalScrollBar().width() / 2)
+        self.filenames.setMaximumWidth(self.filenames.sizeHint().width())
 
         hbox_lower = QtGui.QSplitter(Qt.Horizontal)
         hbox_lower.splitterMoved.connect(self.resizeEvent)
