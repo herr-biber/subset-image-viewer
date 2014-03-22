@@ -3,9 +3,11 @@ import fnmatch
 import os
 import re
 import sys
+import argparse
+
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QSize
-import argparse
+
 from patternreplacer import PatternReplacer
 
 
@@ -123,13 +125,15 @@ class SubsetImageController():
         filename = self._view.get_selected_filename()
         self._view.set_image(filename)
 
+
 class ListWidget(QtGui.QListWidget):
-  def sizeHint(self):
-    s = QSize()
-    s.setHeight(super(ListWidget, self).sizeHint().height())
-    # hint to max text length
-    s.setWidth(self.sizeHintForColumn(0))
-    return s
+    def sizeHint(self):
+        s = QSize()
+        s.setHeight(super(ListWidget, self).sizeHint().height())
+        # hint to max text length
+        s.setWidth(self.sizeHintForColumn(0))
+        return s
+
 
 class SubsetImageView(QtGui.QWidget):
     def __init__(self, controller, parent=None):
@@ -167,7 +171,8 @@ class SubsetImageView(QtGui.QWidget):
         self.filenames.currentItemChanged.connect(controller.filename_changed)
         self.filenames.updateGeometry()
         # width from scrollbar is too big? just use half of it.
-        self.filenames.setMaximumWidth(self.filenames.sizeHint().width() + self.filenames.verticalScrollBar().width() / 2)
+        self.filenames.setMaximumWidth(self.filenames.sizeHint().width()
+                                       + self.filenames.verticalScrollBar().width() / 2)
 
         hbox_lower = QtGui.QSplitter(Qt.Horizontal)
         hbox_lower.splitterMoved.connect(self.resizeEvent)
@@ -208,15 +213,15 @@ class SubsetImageView(QtGui.QWidget):
         self.filenames.clear()
         self.filenames.addItems(filenames)
 
-    def resizeEvent(self, QResizeEvent):
+    def resizeEvent(self, resize_event):
         if self.image and not self.image.isNull():
             self.image_widget.setPixmap(self.image.scaled(self.image_widget.size(), Qt.KeepAspectRatio))
 
     def set_statusbar(self, message, time=10000):
         self.parent().statusBar().showMessage(message, time)
 
-def main():
 
+def main():
     parser = argparse.ArgumentParser(description='Subset image viewer.',
                                      formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument('--suffix', '-s', default='', help='suffix which is appended to all paths')
