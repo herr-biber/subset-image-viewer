@@ -219,7 +219,7 @@ def main():
     parser.add_argument('--suffix', '-s', default='', help='Suffix which is appended to all paths')
     parser.add_argument('--delimiters', '-d', default='-', help='Delimiters for splitting paths')
     parser.add_argument('--ignore-missing', '-i', action='store_true', help='Ignore missing paths')
-    parser.add_argument('--paths', '-p', nargs='+', help='Paths')
+    parser.add_argument('--paths', '-p', nargs='+', help='image file names. Use - to read file names from stdin')
 
     args = parser.parse_args()
 
@@ -233,6 +233,10 @@ def main():
                 paths.append(path)
     else:
         paths = args.paths
+
+    if paths == ['-']:
+        print "Reading file names from stdin"
+        paths = [l.strip() for l in sys.stdin.readlines()]
 
     app = QtGui.QApplication(sys.argv)
     sim = SubsetImageModel(paths=paths, split_tokens=args.delimiters, suffix=args.suffix)
