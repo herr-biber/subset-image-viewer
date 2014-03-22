@@ -54,7 +54,6 @@ class SubsetImageModel():
                 self.default_subsets[i] = (subset - set('*')).pop()
 
         self.set_active_subset(['*'] * len(self._perm))
-        self._update_filenames()
 
     def _changeable_to_total(self, changeable):
         # fill total pattern with changeable using perm
