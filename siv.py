@@ -231,6 +231,7 @@ def main():
     sic.set_model(sim)
     siv = SubsetImageView(sic)
     main_window = QtGui.QMainWindow()
+    main_window.setWindowTitle("siv - Subset Image Viewer")
     main_window.setCentralWidget(siv)
     main_window.show()
 
