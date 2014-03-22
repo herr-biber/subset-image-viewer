@@ -241,10 +241,11 @@ def main():
 
     args = parser.parse_args()
 
-    paths = []
     if args.paths == ['-']:
         print "Reading file names from stdin"
         paths = [l.strip() for l in sys.stdin.readlines()]
+    else:
+        paths = args.paths
 
     if args.ignore_missing:
         valid_paths = []
