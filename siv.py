@@ -215,10 +215,11 @@ class SubsetImageView(QtGui.QWidget):
 
 def main():
 
-    parser = argparse.ArgumentParser(description='Subset image viewer.')
-    parser.add_argument('--suffix', '-s', default='', help='Suffix which is appended to all paths')
-    parser.add_argument('--delimiters', '-d', default='-', help='Delimiters for splitting paths')
-    parser.add_argument('--ignore-missing', '-i', action='store_true', help='Ignore missing paths')
+    parser = argparse.ArgumentParser(description='Subset image viewer.',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--suffix', '-s', default='', help='suffix which is appended to all paths')
+    parser.add_argument('--delimiters', '-d', default='-', help='delimiters for splitting paths')
+    parser.add_argument('--ignore-missing', '-i', action='store_true', help='ignore missing paths')
     parser.add_argument('--paths', '-p', nargs='+', help='image file names. Use - to read file names from stdin')
 
     args = parser.parse_args()
