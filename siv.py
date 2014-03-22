@@ -242,19 +242,21 @@ def main():
     args = parser.parse_args()
 
     paths = []
+    if args.paths == ['-']:
+        print "Reading file names from stdin"
+        paths = [l.strip() for l in sys.stdin.readlines()]
+
     if args.ignore_missing:
-        for path in args.paths:
+        valid_paths = []
+        for path in paths:
             filename = path + args.suffix
             if not os.path.exists(filename):
                 sys.stderr.write("Ignoring missing file: %s\n" % filename)
+            elif not os.path.isfile(filename):
+                sys.stderr.write("Ignoring directory: %s\n" % filename)
             else:
-                paths.append(path)
-    else:
-        paths = args.paths
-
-    if paths == ['-']:
-        print "Reading file names from stdin"
-        paths = [l.strip() for l in sys.stdin.readlines()]
+                valid_paths.append(path)
+        paths = valid_paths
 
     app = QtGui.QApplication(sys.argv)
     sim = SubsetImageModel(paths=paths, split_tokens=args.delimiters, suffix=args.suffix)
