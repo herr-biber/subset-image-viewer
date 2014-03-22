@@ -17,6 +17,8 @@ class SubsetImageModel():
 
         self._view = None
         self._active_subset = None
+        self._glob_pattern = None
+        self.filenames = None
 
         # get subdirs of imagedir
         subdirs = self._paths
