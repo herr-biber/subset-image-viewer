@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 import fnmatch
 import os
 import re
@@ -33,7 +33,7 @@ class SubsetImageModel():
         assert all(self.pr.verify(s) for s in subdirs), "All paths must have the same number of tokens"
 
         # add asterisks
-        self.subsets = [set("*") for i in xrange(self._n_subsets)]
+        self.subsets = [set("*") for i in range(self._n_subsets)]
         for subdir in subdirs:
             tokens = re.split("|".join(re.escape(t) for t in split_tokens), subdir)
             tokens = [t for t in tokens if t]  # remove empty ones
@@ -52,7 +52,6 @@ class SubsetImageModel():
                 # fix tokens which are unique. No need to glob them
                 assert '*' in subset
                 self.default_subsets[i] = (subset - set('*')).pop()
-
         self.set_active_subset(['*'] * len(self._perm))
 
     def _changeable_to_total(self, changeable):
@@ -243,7 +242,6 @@ class SubsetImageView(QtGui.QWidget):
         else:
             # otherwise select first item
             self.filenames.setCurrentRow(0)
-
 
 def main():
     parser = argparse.ArgumentParser(description='Subset image viewer.',
