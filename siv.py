@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import fnmatch
 import os
 import re
@@ -26,10 +27,12 @@ class SubsetImageModel():
         subdirs = self._paths
 
         # use first path as pattern
+        print("Creating pattern")
         self.pr = PatternReplacer(subdirs[0], split_tokens)
         self._n_subsets = self.pr.get_n_tokens()
 
         # all subdirs should have the same number of tokens
+        print("Verifying filenames")
         assert all(self.pr.verify(s) for s in subdirs), "All paths must have the same number of tokens"
 
         # add asterisks
@@ -254,7 +257,7 @@ def main():
     args = parser.parse_args()
 
     if args.paths == ['-']:
-        print "Reading file names from stdin"
+        print("Reading file names from stdin")
         paths = [l.strip() for l in sys.stdin.readlines()]
     else:
         paths = args.paths
@@ -271,6 +274,8 @@ def main():
                 valid_paths.append(path)
         paths = valid_paths
 
+    print("%d files loaded" % len(paths))
+
     app = QtGui.QApplication(sys.argv)
     sim = SubsetImageModel(paths=paths, split_tokens=args.delimiters, suffix=args.suffix)
     sic = SubsetImageController()
@@ -279,6 +284,7 @@ def main():
     main_window = QtGui.QMainWindow()
     main_window.setWindowTitle("siv - Subset Image Viewer")
     main_window.setCentralWidget(siv)
+    print("Loading GUI")
     main_window.show()
 
     sys.exit(app.exec_())
