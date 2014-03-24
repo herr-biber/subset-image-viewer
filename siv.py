@@ -203,6 +203,11 @@ class SubsetImageView(QtGui.QWidget):
             # initial focus on list
             self.filenames.setFocus()
 
+    def keyPressEvent(self, key_event):
+        # anti alias keyboard shortcut
+        if key_event.key() == Qt.Key_F1:
+            self.anti_alias.nextCheckState()
+
     def get_selected_subset(self):
         selected_combos = []
         for c in self.combos:
