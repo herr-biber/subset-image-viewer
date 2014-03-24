@@ -168,6 +168,7 @@ class SubsetImageView(QtGui.QWidget):
 
         self.anti_alias = QtGui.QCheckBox()
         self.anti_alias.setText("AA")
+        self.anti_alias.setToolTip("anti-aliasing (F1)")
         self.anti_alias.setFixedSize(self.anti_alias.sizeHint())
         self.anti_alias.stateChanged.connect(self.resizeEvent)
         hbox_upper.addWidget(self.anti_alias, 0, Qt.AlignRight)
