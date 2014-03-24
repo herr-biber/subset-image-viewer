@@ -195,6 +195,14 @@ class SubsetImageView(QtGui.QWidget):
         vbox.addWidget(hbox_lower)
         self.setLayout(vbox)
 
+        # select first file on startup
+        if len(self.filenames) > 0:
+            self.filenames.setCurrentRow(0)
+            controller.filename_changed()
+
+            # initial focus on list
+            self.filenames.setFocus()
+
     def get_selected_subset(self):
         selected_combos = []
         for c in self.combos:
