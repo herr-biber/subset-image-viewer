@@ -44,7 +44,7 @@ class SubsetImageModel():
             for i, t in enumerate(tokens):
                 self.subsets[i].add(t)
 
-        self.default_subsets = [set("*")] * self._n_subsets
+        self.default_subsets = ["*"] * self._n_subsets
 
         # Mapping from changeable token index to index in complete range
         self._perm = []
