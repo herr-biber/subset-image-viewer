@@ -181,10 +181,17 @@ class SubsetImageView(QtGui.QWidget):
 
         # filename list
         self.filenames = ListWidget()
-        self.filenames.addItems(controller.get_filenames())
         self.filenames.currentItemChanged.connect(controller.filename_changed)
         self.filenames.updateGeometry()
-        self.filenames.setMaximumWidth(self.filenames.sizeHint().width())
+
+        # open collapsed
+        if len(controller.get_filenames()) > 5000:
+            print("Found more than 5000 images. Preselecting subsets for faster loading.")
+            for combo in self.combos:
+                combo.setCurrentIndex(1)
+
+        # trigger loading of filename list
+        self._combos_changed()
 
         hbox_lower = QtGui.QSplitter(Qt.Horizontal)
         hbox_lower.splitterMoved.connect(self.resizeEvent)
@@ -237,6 +244,8 @@ class SubsetImageView(QtGui.QWidget):
     def set_filenames(self, filenames):
         self.filenames.clear()
         self.filenames.addItems(filenames)
+        self.filenames.setMaximumWidth(self.filenames.sizeHint().width())
+
 
     def resizeEvent(self, resize_event=None):
         if self.image and not self.image.isNull():
