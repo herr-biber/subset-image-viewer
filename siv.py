@@ -216,6 +216,11 @@ class SubsetImageView(QtGui.QWidget):
         if key_event.key() == Qt.Key_F1:
             self.anti_alias.nextCheckState()
 
+        # copy current filename to clipboard
+        if key_event.key() == Qt.Key_F2:
+            clipboard = QtGui.QApplication.clipboard()
+            clipboard.setText(self.get_selected_filename())
+
     def get_selected_subset(self):
         selected_combos = []
         for c in self.combos:
