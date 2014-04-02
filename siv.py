@@ -114,7 +114,7 @@ class SubsetImageController():
     def combos_changed(self):
         self._model.set_active_subset(self._view.get_selected_subset())
         self._view.set_filenames(self._model.get_filenames())
-        self._view.set_statusbar(self._model.get_glob_pattern())
+        self._view.set_statusbar(self.get_glob_pattern())
         self.filename_changed()
 
     def get_subsets(self):
@@ -126,6 +126,9 @@ class SubsetImageController():
     def filename_changed(self):
         filename = self._view.get_selected_filename()
         self._view.set_image(filename)
+
+    def get_glob_pattern(self):
+        return self._model.get_glob_pattern()
 
 
 class ListWidget(QtGui.QListWidget):
@@ -220,6 +223,10 @@ class SubsetImageView(QtGui.QWidget):
         if key_event.key() == Qt.Key_F2:
             clipboard = QtGui.QApplication.clipboard()
             clipboard.setText(self.get_selected_filename())
+
+        if key_event.key() == Qt.Key_F3:
+            clipboard = QtGui.QApplication.clipboard()
+            clipboard.setText(self._controller.get_glob_pattern())
 
     def get_selected_subset(self):
         selected_combos = []
