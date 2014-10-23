@@ -256,7 +256,35 @@ class SubsetImageView(QtGui.QWidget):
         if not os.path.exists(filename):
             self.image_widget.setText("File not found: \n" + filename)
         else:
-            self.image = QtGui.QPixmap(filename)
+            is_monochrome_16_tiff = False
+            image_reader = QtGui.QImageReader(filename)
+            
+            # use pil to decide for 16 bit tiff
+            i = Image.open(filename)
+            if(image_reader.format() == 'tiff'):
+                if i.mode == 'I;16':
+                    is_monochrome_16_tiff = True
+                
+            # open 16 bit monochrome tiff using PIL and make drawable 8 bit out of it
+            if is_monochrome_16_tiff:
+         
+                # np array from pil image
+                # TODO maybe use pil to get rid of numpy dependency
+                image = np.array(i.getdata()).reshape(i.size[0], i.size[1])
+                
+                # # use leftmost 8 bit starting from first 1
+                shift = int(np.ceil(np.log2(np.max(image)))) - 8  
+                shift = max(shift, 0)  # use rightmost 8 bit, if max is smaller than 255
+                image >>= shift
+                
+                # assemble QImage data structure
+                image = (255 << 24 | image << 16 | image << 8 | image)  # ARGB from grayscale
+                image = image.astype(np.uint32)
+                image = QtGui.QImage(image.ravel(), image.shape[0], image.shape[1], QtGui.QImage.Format_RGB32).copy()
+            else:
+                image = image_reader.read()
+            
+            self.image = QtGui.QPixmap(image)
             self.image_widget.setPixmap(self.image)
         self.resizeEvent()
 
