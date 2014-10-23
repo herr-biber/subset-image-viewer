@@ -6,8 +6,15 @@ import re
 import sys
 import argparse
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import Qt, QSize
+import numpy as np
+from PIL import Image
+
+try:
+    from PySide import QtGui
+    from PySide.QtCore import Qt, QSize
+except:
+    from PyQt4 import QtGui
+    from PyQt4.QtCore import Qt, QSize
 
 from patternreplacer import PatternReplacer
 
@@ -207,7 +214,7 @@ class SubsetImageView(QtGui.QWidget):
         self.setLayout(vbox)
 
         # select first file on startup
-        if len(self.filenames) > 0:
+        if self.filenames.count() > 0:
             self.filenames.setCurrentRow(0)
             controller.filename_changed()
 
